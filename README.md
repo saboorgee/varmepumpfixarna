@@ -48,7 +48,7 @@ Open [apps/backend/sql/supabase-setup.sql](apps/backend/sql/supabase-setup.sql),
 * creates login role `medusa` with `search_path = medusa`;
 * creates schema `medusa` owned by that role;
 * grants `CREATE` on the database (Medusa's link sync needs it, see [Findings](#medusa-2226-findings));
-* revokes `anon` / `authenticated` from the schema;
+* revokes `anon` / `authenticated` / `service_role` from the schema;
 * grants `medusa` to `postgres`, so the dashboard and `pg_dump` can see Medusa's objects.
 
 Medusa therefore never touches `public`, `auth`, `storage` or other Supabase schemas. The role has no privileges on existing tables.
@@ -210,7 +210,7 @@ If startup logs `ENETUNREACH`/`EHOSTUNREACH`, you're using the IPv6-only direct 
 Supabase's REST/GraphQL Data API only serves schemas listed under **Project Settings → Data API → Exposed schemas**, which defaults to `public` and `graphql_public`. Medusa's tables live in schema `medusa`, so:
 
 1. **Don't add `medusa` to "Exposed schemas".**
-2. The setup SQL revokes all privileges for `anon` and `authenticated` on the schema and on future tables, sequences and functions. Even if the schema were exposed, requests with the anon key would get permission errors. The preflight re-applies the schema-level revoke on every start.
+2. The setup SQL revokes all privileges for `anon`, `authenticated` and `service_role` (as in Supabase's "Securing your API" guide) on the schema and on future tables, sequences and functions. Even if the schema were exposed, requests with the anon key would get permission errors. The preflight re-applies the schema-level revoke on every start.
 3. Verify:
    ```sql
    select grantee, privilege_type from information_schema.usage_privileges where object_schema = 'medusa';

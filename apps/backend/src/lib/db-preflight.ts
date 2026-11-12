@@ -9,7 +9,7 @@
  *  4. Verifies the connecting role defaults to the Medusa schema (role-level
  *     search_path from sql/supabase-setup.sql) and can create objects there.
  *  5. Re-applies the revocation of Supabase's Data API roles (`anon`,
- *     `authenticated`) on the schema when the role owns it.
+ *     `authenticated`, `service_role`) on the schema when the role owns it.
  *
  * Usage: node src/lib/db-preflight.js   (compiled output, inside the container)
  */
@@ -225,7 +225,7 @@ async function main() {
     if (schema !== "public" && c.owner === c.user) {
       // Idempotent hardening (also done by the setup SQL).
       const { rows: roles } = await client.query<{ rolname: string }>(
-        "select rolname from pg_roles where rolname in ('anon', 'authenticated')"
+        "select rolname from pg_roles where rolname in ('anon', 'authenticated', 'service_role')"
       )
       if (roles.length) {
         const list = roles.map((r) => `"${r.rolname}"`).join(", ")

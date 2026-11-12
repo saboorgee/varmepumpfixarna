@@ -33,13 +33,20 @@ do $$ begin
 end $$;
 
 -- Keep Medusa out of Supabase's Data API (PostgREST/GraphQL), regardless of
--- the "Exposed schemas" setting.
-revoke all on schema medusa from anon, authenticated;
-alter default privileges for role medusa in schema medusa revoke all on tables from anon, authenticated;
-alter default privileges for role medusa in schema medusa revoke all on sequences from anon, authenticated;
-alter default privileges for role medusa in schema medusa revoke all on functions from anon, authenticated;
+-- the "Exposed schemas" setting. Includes service_role, as in Supabase's
+-- "Securing your API" guide: Medusa never needs the Supabase API keys.
+revoke all on schema medusa from anon, authenticated, service_role;
+alter default privileges for role medusa in schema medusa revoke all on tables from anon, authenticated, service_role;
+alter default privileges for role medusa in schema medusa revoke all on sequences from anon, authenticated, service_role;
+alter default privileges for role medusa in schema medusa revoke all on functions from anon, authenticated, service_role;
 
--- Verify (expected: search_path = medusa, owner = medusa, no anon/authenticated rows):
+-- Verify (run each separately; the SQL Editor shows only the last result):
 --   select rolname, rolconfig from pg_roles where rolname = 'medusa';
+--     -> medusa | {search_path=medusa}
 --   select nspname, pg_get_userbyid(nspowner) from pg_namespace where nspname = 'medusa';
---   select grantee, privilege_type from information_schema.usage_privileges where object_schema = 'medusa';
+--     -> medusa | medusa
+--   select has_database_privilege('medusa', current_database(), 'CREATE');
+--     -> true  (a failed grant is only a WARNING, so check it explicitly)
+--   select r.rolname, has_schema_privilege(r.rolname, 'medusa', 'USAGE') as usage
+--     from pg_roles r where r.rolname in ('anon', 'authenticated', 'service_role');
+--     -> usage = false for all three

@@ -1,9 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
-import heroImage from "@/assets/hero-hus.webp";
 import { SITE } from "@/lib/site";
 import { BrandMark, Icon } from "@/components/ui/icons";
 import { IntentLink } from "@/components/ui/intent-link";
+import { HeroArt } from "./hero-art";
 import { QuoteForm } from "./quote-form";
 
 export function Hero() {
@@ -34,15 +33,9 @@ export function Hero() {
               Pris med installation
             </span>
           </div>
-          <figure className="hero-photo">
-            <Image
-              src={heroImage}
-              alt="Illustrativ bild av ett svenskt trähus med en utomhusdel till en värmepump"
-              sizes="(max-width: 680px) 100vw, 60vw"
-              placeholder="blur"
-              preload
-            />
-            <figcaption>Illustrationsbild</figcaption>
+          {/* TODO(config): optionally swap for a real photo from your own installations later. */}
+          <figure className="hero-photo hero-art">
+            <HeroArt />
             <div className="photo-label">
               <Icon name="pin" />
               <span>

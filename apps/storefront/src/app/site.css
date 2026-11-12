@@ -448,6 +448,67 @@
     font-weight: 550;
   }
 
+  /* Illustrated hero (heat pump as the subject) */
+  .hero-art {
+    background: #eef1e4;
+    border: 1px solid #dde3cf;
+  }
+  .hero-art::after {
+    display: none;
+  }
+  .hero-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .hero-svg text {
+    font-family: var(--body);
+    font-size: 18px;
+    font-weight: 650;
+    fill: var(--ink);
+  }
+  .hero-art .photo-label {
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid #dde3cf;
+    border-radius: 6px;
+    padding: 8px 14px 8px 10px;
+    left: 18px;
+    bottom: 18px;
+  }
+  .hero-flow {
+    animation: hero-flow 1.4s linear infinite;
+  }
+  .hero-fan {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: hero-spin 7s linear infinite;
+  }
+  .hero-heat {
+    animation: hero-rise 3.2s ease-in-out infinite;
+  }
+  @keyframes hero-flow {
+    to {
+      stroke-dashoffset: -32;
+    }
+  }
+  @keyframes hero-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes hero-rise {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: translateY(4px);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+  }
+
   /* ---------- Quote form ---------- */
   .quote-card {
     background: #fff;
@@ -2087,6 +2148,21 @@
     .page-title {
       font-size: 30px;
       letter-spacing: -1.2px;
+    }
+  }
+
+  /* Illustrated hero on tablet/phone: taller crop, bigger labels, no overlay label. */
+  @media (max-width: 880px) {
+    .hero-photo.hero-art {
+      aspect-ratio: 1.45;
+    }
+  }
+  @media (max-width: 680px) {
+    .hero-photo.hero-art {
+      aspect-ratio: 1.6;
+    }
+    .hero-art .photo-label {
+      display: none;
     }
   }
 

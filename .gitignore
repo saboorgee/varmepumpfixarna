@@ -6,9 +6,24 @@ node_modules/
 .env.*
 !.env.example
 
+# TLS certificates (Supabase CA etc.) – downloaded per environment
+certs/*
+!certs/.gitkeep
+*.pem
+*.crt
+*.key
+
+# Database dumps
+*.dump
+
 # Build output
 dist/
 build/
+.medusa/
+.next/
+
+# Local uploads (Docker volume in compose)
+apps/backend/static/
 
 # Logs
 *.log

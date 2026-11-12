@@ -15,7 +15,7 @@ browser ──► storefront :8000 (Next.js server) ──► backend:9000 (Dock
 browser ──► backend :9000  (Admin /app, product images /static)
 ```
 
-* All Medusa calls run on the Next.js server (Server Components / Server Actions). The browser never calls the Store API, so the storefront uses the Docker-internal URL `http://backend:9000`, and the publishable key is a runtime server variable.
+* All Medusa calls run on the Next.js server (Server Components / Server Actions). The browser never calls the Store API, so the storefront uses the Docker-internal URL `http://varmepumpfixarna-backend:9000` (a network alias of the `backend` service), and the publishable key is a runtime server variable.
 * The cart id lives only in an HTTP-only cookie (`vpf_cart_id`, `SameSite=Lax`). After checkout it's replaced by a short-lived HTTP-only cookie holding the order id. The confirmation page only renders for that order, because Medusa's Store API returns any order by id.
 * Commerce validation (stock, prices, address, shipping eligibility, payment) stays in Medusa. The storefront forwards input and shows Medusa's errors, with Swedish wording for common ones.
 
@@ -138,15 +138,36 @@ docker compose down -v                    # stop AND delete uploaded images (DB 
 
 The images contain no `.env`, secrets or certificates; everything is injected at runtime.
 
-**On the server** (Docker Engine with the Compose plugin; no Node.js or PostgreSQL needed):
+### Server deployment (nginx-proxy, same pattern as the other apps)
+
+The server already runs `jwilder/nginx-proxy` on ports 80/443 on the external Docker network `nginx-proxy`. HTTPS is terminated in front of it (Cloudflare). [docker-compose.server.yml](docker-compose.server.yml) attaches both services to that network:
+
+| Service | `VIRTUAL_HOST` | `VIRTUAL_PORT` |
+|---|---|---|
+| storefront | `STOREFRONT_DOMAIN` (e.g. `varmepumpfixarna.se`) | 8000 |
+| backend (Store API, Admin at `/app`, images at `/static`) | `BACKEND_DOMAIN` (e.g. `admin.varmepumpfixarna.se`) | 9000 |
+
+Setting `COMPOSE_PATH_SEPARATOR=:` and `COMPOSE_FILE=docker-compose.yml:docker-compose.server.yml` in the server's `.env` makes every plain `docker compose …` command include the overlay. Ports 8000/9000 are bound to `127.0.0.1` only; the public entry point is nginx-proxy. Override them with `STOREFRONT_HOST_PORT` / `BACKEND_HOST_PORT` if they're taken.
+
+**First-time setup on the server** (Docker Engine with the Compose plugin; no Node.js or PostgreSQL needed):
 
 ```sh
+cd /home/saboor/program
 git clone https://github.com/saboorgee/varmepumpfixarna.git && cd varmepumpfixarna
+chmod +x deploy.sh
 # GHCR packages of a private repo are private: log in with a token that has read:packages
 echo "<github-token>" | docker login ghcr.io -u <github-user> --password-stdin
 
-cp .env.example .env          # fill in as in "Initial setup" (DATABASE_URL, secrets, URLs)
-# put the Supabase CA at certs/supabase-ca.crt
+cp .env.example .env
+# Fill in as in "Initial setup" (DATABASE_URL, secrets), plus the server values:
+#   COMPOSE_PATH_SEPARATOR=:
+#   COMPOSE_FILE=docker-compose.yml:docker-compose.server.yml
+#   STOREFRONT_DOMAIN=…   BACKEND_DOMAIN=…
+#   STORE_CORS=https://<STOREFRONT_DOMAIN>
+#   ADMIN_CORS=https://<BACKEND_DOMAIN>   AUTH_CORS=https://<BACKEND_DOMAIN>
+#   MEDUSA_PUBLIC_URL=https://<BACKEND_DOMAIN>
+#   MEDUSA_COOKIE_SECURE=true   STOREFRONT_COOKIE_SECURE=true
+# Put the Supabase CA at certs/supabase-ca.crt
 
 docker compose pull
 docker compose run --rm backend migrate
@@ -155,9 +176,19 @@ docker compose run --rm backend create-admin admin@example.com 'a-strong-passwor
 docker compose up -d --no-build
 ```
 
-To update, run `git pull && docker compose pull && docker compose up -d --no-build`. To pin a build instead of `latest`, set `BACKEND_IMAGE` / `STOREFRONT_IMAGE` in `.env` (e.g. `…:sha-1a2b3c4`).
+Point both DNS names at the server (in Cloudflare, proxied, like the other sites). Then:
 
-For a public server, also set `MEDUSA_PUBLIC_URL`, `STORE_CORS`, `ADMIN_CORS` and `AUTH_CORS` to the real HTTPS URLs, put a TLS reverse proxy in front of ports 8000/9000, and set `MEDUSA_COOKIE_SECURE=true` and `STOREFRONT_COOKIE_SECURE=true`. The [production requirements](#production-requirements-not-covered-by-this-local-foundation) still apply (Redis, worker split, and so on).
+* Shop: `https://<STOREFRONT_DOMAIN>`
+* Admin: `https://<BACKEND_DOMAIN>/app`
+
+**Updates:** push to `main`, wait for the "Docker images" workflow, then run `./deploy.sh` on the server. It runs `git pull`, `docker compose pull` and `docker compose up -d`; the backend applies migrations on start. To pin a build instead of `latest`, set `BACKEND_IMAGE` / `STOREFRONT_IMAGE` in `.env` (e.g. `…:sha-1a2b3c4`).
+
+Notes:
+
+* **Upload size.** nginx-proxy uses nginx's default 1 MB request body limit, so Admin image uploads above 1 MB fail with `413`. To raise it, mount a vhost file into the proxy, e.g. `./vhost.d:/etc/nginx/vhost.d:ro` with a file named `<BACKEND_DOMAIN>` containing `client_max_body_size 20m;`.
+* **One-off commands on a running server.** `docker compose run` briefly starts an extra backend container, and nginx-proxy routes some traffic to it while it runs. Once the shop is live, prefer `docker compose exec backend sh /app/docker-entrypoint.sh seed` (or `create-admin …`).
+
+The [production requirements](#production-requirements-not-covered-by-this-local-foundation) still apply (Redis, worker split, and so on).
 
 ## Supabase notes
 

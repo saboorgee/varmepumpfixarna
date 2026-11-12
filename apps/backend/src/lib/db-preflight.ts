@@ -152,10 +152,17 @@ async function main() {
 
   const client = await connectWithRetry()
   try {
-    const { rows: info } = await client.query<{ version: string; ssl: boolean | null }>(
-      "select current_setting('server_version') as version, (select ssl from pg_stat_ssl where pid = pg_backend_pid()) as ssl"
+    const { rows: info } = await client.query<{ version: string }>(
+      "select current_setting('server_version') as version"
     )
-    log(`Connected. PostgreSQL ${info[0].version}, TLS in use: ${info[0].ssl ?? "unknown"}`)
+    // Inspect this client's own socket. (pg_stat_ssl on the server would describe
+    // the pooler→database hop when connecting through Supavisor, not this link.)
+    const stream = (client as unknown as { connection?: { stream?: { encrypted?: boolean; getProtocol?: () => string | null } } })
+      .connection?.stream
+    const tls = stream?.encrypted
+      ? `TLS ${stream.getProtocol?.() ?? ""}`.trim() + (sslMode === "verify-full" ? ", certificate and hostname verified" : sslMode === "verify-ca" ? ", certificate verified" : ", NOT verified")
+      : "no TLS"
+    log(`Connected. PostgreSQL ${info[0].version}, connection: ${tls}`)
 
     // Medusa 2.22's module migrations run unqualified DDL, so tables land in the
     // session's default schema. That default must be the Medusa schema – set on

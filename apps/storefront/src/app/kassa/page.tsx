@@ -9,7 +9,8 @@ import {
   type PaymentChoice,
   type ShippingChoice,
 } from "@/components/forms";
-import { Loading, StoreError } from "@/components/store-ui";
+import { Icon } from "@/components/ui/icons";
+import { Card, Loading, Page, StoreError } from "@/components/store-ui";
 
 export const metadata: Metadata = { title: "Kassa" };
 
@@ -58,21 +59,23 @@ async function Checkout() {
 
   if (!cart?.items?.length) {
     return (
-      <p>
-        Varukorgen är tom.{" "}
-        <Link href="/" className="text-sky-700 hover:underline">
-          Till produkterna
+      <Card>
+        <p className="text-[15px]">Varukorgen är tom.</p>
+        <Link href="/produkter" className="text-button mt-2">
+          Till produkterna <Icon name="arrow" />
         </Link>
-      </p>
+      </Card>
     );
   }
 
   return (
-    <div className="grid gap-10 md:grid-cols-[1fr_18rem]">
-      <CheckoutForm shippingOptions={shippingOptions} paymentOptions={paymentOptions} />
-      <aside className="h-fit rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="mb-3 font-semibold">Din beställning</h2>
-        <ul className="space-y-2 text-sm">
+    <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <Card className="sm:p-8">
+        <CheckoutForm shippingOptions={shippingOptions} paymentOptions={paymentOptions} />
+      </Card>
+      <Card className="lg:sticky lg:top-[120px]">
+        <h2 className="mb-4 font-heading text-[19px] font-semibold tracking-[-0.4px]">Din beställning</h2>
+        <ul className="space-y-2 text-[14px]">
           {cart.items.map((item) => (
             <li key={item.id} className="flex justify-between gap-2">
               <span>
@@ -82,23 +85,22 @@ async function Checkout() {
             </li>
           ))}
         </ul>
-        <p className="mt-4 flex justify-between border-t border-slate-200 pt-3 font-medium">
+        <p className="mt-4 flex justify-between border-t border-line pt-3 font-semibold">
           <span>Varor</span>
           <span>{formatSek(cart.item_total)}</span>
         </p>
-        <p className="mt-1 text-xs text-slate-500">Frakt tillkommer enligt valt fraktsätt.</p>
-      </aside>
+        <p className="mt-1 text-[12px] text-muted">Frakt tillkommer enligt valt fraktsätt.</p>
+      </Card>
     </div>
   );
 }
 
 export default function CheckoutPage() {
   return (
-    <>
-      <h1 className="mb-6 text-3xl font-bold">Kassa</h1>
+    <Page eyebrow="Nästan klart" title="Kassa">
       <Suspense fallback={<Loading label="Förbereder kassan…" />}>
         <Checkout />
       </Suspense>
-    </>
+    </Page>
   );
 }

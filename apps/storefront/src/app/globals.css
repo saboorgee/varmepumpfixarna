@@ -1,23 +1,46 @@
 @import "tailwindcss";
+@import "./site.css";
 
+/* Design tokens from the Häglared homepage mockup. */
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --ink: #183e35;
+  --ink-dark: #12332b;
+  --ink-hover: #2b5548;
+  --muted: #65726a;
+  --paper: #f7f7f0;
+  --cream: #efefe6;
+  --mist: #f0f2e9;
+  --line: #dce1d5;
+  --orange: #f4aa72;
+  --orange-hover: #f1bb90;
+  --yellow: #dfe6ac;
+  --olive: #7a8b53;
+  --sage: #95a88f;
+  --copper: #aa6738;
+  --danger: #9a442b;
+  --danger-bg: #fff0e7;
+  --heading: var(--font-manrope), "Manrope", sans-serif;
+  --body: var(--font-dm-sans), "DM Sans", sans-serif;
 }
 
+/* Tailwind utilities for the shop pages (bg-paper, text-ink, font-heading …). */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family:
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    Roboto,
-    Arial,
-    sans-serif;
+  --color-ink: var(--ink);
+  --color-ink-dark: var(--ink-dark);
+  --color-ink-hover: var(--ink-hover);
+  --color-muted: var(--muted);
+  --color-paper: var(--paper);
+  --color-cream: var(--cream);
+  --color-mist: var(--mist);
+  --color-line: var(--line);
+  --color-orange: var(--orange);
+  --color-orange-hover: var(--orange-hover);
+  --color-yellow: var(--yellow);
+  --color-olive: var(--olive);
+  --color-sage: var(--sage);
+  --color-copper: var(--copper);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --font-heading: var(--heading);
+  --font-body: var(--body);
 }

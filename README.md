@@ -276,6 +276,23 @@ Found while verifying against a real PostgreSQL. The design above works around t
 | Totals | 3 × 18 995 + 495 = **57 480 kr incl. 11 496 kr moms** (after fix 3) |
 | Restart persistence | backend stopped and restarted: preflight + migrate no-op; Admin login (session cookie `HttpOnly; SameSite=Lax`, no `Secure` on http); all orders listed via the Admin API; images still served |
 
+## Storefront design and open configuration (TODO)
+
+The storefront follows the Häglared homepage mockup: brand **Värmepumpfixarna by Häglared Bygg och Kyla AB**, quote-first homepage (`/`) with the shop under `/produkter`. Styles live in `apps/storefront/src/app/site.css` (ported from the mockup, same class names and breakpoints) with design tokens in `globals.css`; company details in `src/lib/site.ts`.
+
+Everything that still needs configuration is marked in the code with `TODO(config)`. List the markers with `grep -rn "TODO(config)" apps`.
+
+| Item | Where |
+|---|---|
+| **Quote form is not connected.** It validates and replies honestly that nothing was sent. Needed: store requests (Medusa module with an Admin list), email notification, spam protection and rate limiting | `src/lib/quote.ts` |
+| Attached quotes ("Jämför offert"): private file storage (never public `/static`) and a larger body limit; the file input is not sent yet | `src/lib/quote.ts`, `quote-form.tsx` |
+| Mailbox `info@varmepumpfixarna.se` plus MX/SPF/DKIM in Cloudflare; optional phone number | `src/lib/site.ts`, footer |
+| Real privacy policy | `/integritet` |
+| Medusa product categories (Luft/luft, Luft/vatten, Bergvärme) to filter `/produkter` from the homepage cards | `produkter/page.tsx`, `sections.tsx` |
+| Official NIBE/Toshiba dealer logos (text wordmarks for now) | `sections.tsx` |
+| Real payment provider, then remove the test notice and test labels | `header.tsx`, `forms.tsx` |
+| Order confirmation emails | `order/[id]/page.tsx` |
+
 ## Production requirements (not covered by this local foundation)
 
 * **Redis** for the event bus, cache/caching, workflow engine and locking modules (`@medusajs/medusa/event-bus-redis`, `workflow-engine-redis`, `locking-redis`, Redis caching), and as the session store. The in-memory providers lose state on restart and don't work across instances.

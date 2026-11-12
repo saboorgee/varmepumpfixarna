@@ -5,7 +5,8 @@ import type { HttpTypes } from "@medusajs/types";
 import { retrieveCart } from "@/lib/cart";
 import { formatSek } from "@/lib/medusa";
 import { LineItemControls } from "@/components/forms";
-import { Loading, StoreError } from "@/components/store-ui";
+import { Icon } from "@/components/ui/icons";
+import { Card, Loading, Page, StoreError } from "@/components/store-ui";
 
 export const metadata: Metadata = { title: "Varukorg" };
 
@@ -19,12 +20,12 @@ async function CartContents() {
 
   if (!cart?.items?.length) {
     return (
-      <p>
-        Varukorgen är tom.{" "}
-        <Link href="/" className="text-sky-700 hover:underline">
-          Fortsätt handla
+      <Card>
+        <p className="text-[15px]">Varukorgen är tom.</p>
+        <Link href="/produkter" className="text-button mt-2">
+          Se våra värmepumpar <Icon name="arrow" />
         </Link>
-      </p>
+      </Card>
     );
   }
 
@@ -33,61 +34,56 @@ async function CartContents() {
   );
 
   return (
-    <div className="space-y-6">
-      <ul className="divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
+    <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <ul className="divide-y divide-line rounded-[9px] border border-line bg-white">
         {items.map((item) => (
-          <li key={item.id} className="flex flex-wrap items-center justify-between gap-4 p-4">
+          <li key={item.id} className="flex flex-wrap items-center justify-between gap-4 p-5">
             <div>
               <Link
                 href={`/produkter/${item.product_handle}`}
-                className="font-medium hover:text-sky-700"
+                className="font-heading text-[17px] font-semibold tracking-[-0.3px] hover:text-copper"
               >
                 {item.product_title ?? item.title}
               </Link>
-              <p className="text-sm text-slate-600">{formatSek(item.unit_price)} / st</p>
+              <p className="text-[13px] text-muted">{formatSek(item.unit_price)} / st</p>
             </div>
             <div className="flex items-center gap-6">
               <LineItemControls lineId={item.id} quantity={item.quantity} />
-              <p className="w-28 text-right font-medium">{formatSek(item.total)}</p>
+              <p className="w-28 text-right font-semibold">{formatSek(item.total)}</p>
             </div>
           </li>
         ))}
       </ul>
 
-      <dl className="ml-auto max-w-xs space-y-1 text-sm">
-        <div className="flex justify-between">
-          <dt>Delsumma</dt>
-          <dd>{formatSek(cart.item_total)}</dd>
-        </div>
-        <div className="flex justify-between text-slate-600">
-          <dt>varav moms</dt>
-          <dd>{formatSek(cart.item_tax_total)}</dd>
-        </div>
-        <div className="flex justify-between text-slate-600">
-          <dt>Frakt</dt>
-          <dd>Beräknas i kassan</dd>
-        </div>
-      </dl>
-
-      <div className="text-right">
-        <Link
-          href="/kassa"
-          className="inline-block rounded-md bg-sky-700 px-6 py-3 font-medium text-white hover:bg-sky-800"
-        >
-          Gå till kassan
+      <Card>
+        <dl className="space-y-2 text-[14px]">
+          <div className="flex justify-between font-semibold">
+            <dt>Delsumma</dt>
+            <dd>{formatSek(cart.item_total)}</dd>
+          </div>
+          <div className="flex justify-between text-muted">
+            <dt>varav moms</dt>
+            <dd>{formatSek(cart.item_tax_total)}</dd>
+          </div>
+          <div className="flex justify-between text-muted">
+            <dt>Frakt</dt>
+            <dd>Beräknas i kassan</dd>
+          </div>
+        </dl>
+        <Link href="/kassa" className="button button-dark mt-5 w-full justify-between">
+          Gå till kassan <Icon name="arrow" />
         </Link>
-      </div>
+      </Card>
     </div>
   );
 }
 
 export default function CartPage() {
   return (
-    <>
-      <h1 className="mb-6 text-3xl font-bold">Varukorg</h1>
+    <Page eyebrow="Din beställning" title="Varukorg">
       <Suspense fallback={<Loading label="Hämtar varukorg…" />}>
         <CartContents />
       </Suspense>
-    </>
+    </Page>
   );
 }

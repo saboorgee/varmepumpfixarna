@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import {
   addToCart,
@@ -11,42 +12,47 @@ import {
 
 const initial: ActionState = {};
 
+const inputClass =
+  "h-11 rounded-[4px] border border-[#dce1d7] bg-[#fdfefb] px-3 text-[14px] text-ink outline-offset-2";
+const labelClass = "mb-1.5 block text-[11px] font-[650]";
+const legendClass = "mb-3 font-heading text-[19px] font-semibold tracking-[-0.4px]";
+
 function ErrorText({ state }: { state: ActionState }) {
   if (!state.error) return null;
   return (
-    <p role="alert" className="mt-2 text-sm text-red-700">
+    <p role="alert" className="mt-3 rounded-[4px] bg-danger-bg p-2.5 text-[13px] text-danger">
       {state.error}
     </p>
   );
 }
 
-const buttonClass =
-  "rounded-md bg-sky-700 px-4 py-2 font-medium text-white hover:bg-sky-800 disabled:cursor-wait disabled:opacity-60";
-
 export function AddToCartForm({ variantId }: { variantId: string }) {
   const [state, action, pending] = useActionState(addToCart, initial);
   return (
-    <form action={action} className="mt-6">
+    <form action={action} className="mt-5">
       <input type="hidden" name="variantId" value={variantId} />
       <div className="flex items-end gap-3">
-        <label className="text-sm">
-          <span className="mb-1 block text-slate-600">Antal</span>
+        <label>
+          <span className={labelClass}>Antal</span>
           <input
             type="number"
             name="quantity"
             min={1}
             max={99}
             defaultValue={1}
-            className="w-20 rounded-md border border-slate-300 px-2 py-2"
+            className={`${inputClass} h-[52px] w-20`}
           />
         </label>
-        <button type="submit" disabled={pending} className={buttonClass}>
+        <button type="submit" disabled={pending} className="button button-orange flex-1">
           {pending ? "Lägger till…" : "Lägg i varukorg"}
         </button>
       </div>
       {state.ok && !pending && (
-        <p role="status" className="mt-2 text-sm text-green-700">
-          Produkten har lagts i varukorgen.
+        <p role="status" className="mt-3 text-[13px] font-semibold text-olive">
+          Produkten har lagts i varukorgen.{" "}
+          <Link href="/varukorg" className="underline underline-offset-2">
+            Till varukorgen
+          </Link>
         </p>
       )}
       <ErrorText state={state} />
@@ -79,12 +85,12 @@ export function LineItemControls({
             max={99}
             defaultValue={quantity}
             key={quantity}
-            className="w-16 rounded-md border border-slate-300 px-2 py-1"
+            className={`${inputClass} h-10 w-16`}
           />
           <button
             type="submit"
             disabled={updating}
-            className="rounded-md border border-slate-300 px-3 py-1 text-sm hover:bg-slate-100 disabled:opacity-60"
+            className="h-10 rounded-[4px] border border-line px-3 text-[12px] font-[650] hover:bg-mist disabled:opacity-60"
           >
             {updating ? "Uppdaterar…" : "Uppdatera"}
           </button>
@@ -94,7 +100,7 @@ export function LineItemControls({
           <button
             type="submit"
             disabled={removing}
-            className="rounded-md px-3 py-1 text-sm text-red-700 hover:bg-red-50 disabled:opacity-60"
+            className="h-10 rounded-[4px] px-3 text-[12px] font-[650] text-danger hover:bg-danger-bg disabled:opacity-60"
           >
             {removing ? "Tar bort…" : "Ta bort"}
           </button>
@@ -122,17 +128,17 @@ function Field({
   required?: boolean;
 }) {
   return (
-    <label className="block text-sm">
-      <span className="mb-1 block text-slate-700">
+    <label className="block">
+      <span className={labelClass}>
         {label}
-        {!required && <span className="text-slate-500"> (valfritt)</span>}
+        {!required && <span className="font-normal text-muted"> (valfritt)</span>}
       </span>
       <input
         name={name}
         type={type}
         required={required}
         autoComplete={autoComplete}
-        className="w-full rounded-md border border-slate-300 px-3 py-2"
+        className={`${inputClass} w-full`}
       />
     </label>
   );
@@ -147,15 +153,15 @@ export function CheckoutForm({
 }) {
   const [state, action, pending] = useActionState(placeOrder, initial);
   return (
-    <form action={action} className="space-y-8">
+    <form action={action} className="space-y-9">
       <fieldset className="space-y-4">
-        <legend className="mb-2 text-lg font-semibold">Kontaktuppgifter</legend>
+        <legend className={legendClass}>Kontaktuppgifter</legend>
         <Field name="email" label="E-post" type="email" autoComplete="email" />
         <Field name="phone" label="Telefon" type="tel" autoComplete="tel" required={false} />
       </fieldset>
 
       <fieldset className="space-y-4">
-        <legend className="mb-2 text-lg font-semibold">Leveransadress</legend>
+        <legend className={legendClass}>Leveransadress</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field name="first_name" label="Förnamn" autoComplete="given-name" />
           <Field name="last_name" label="Efternamn" autoComplete="family-name" />
@@ -165,20 +171,18 @@ export function CheckoutForm({
           <Field name="postal_code" label="Postnummer" autoComplete="postal-code" />
           <Field name="city" label="Ort" autoComplete="address-level2" />
         </div>
-        <p className="text-sm text-slate-600">Land: Sverige</p>
+        <p className="text-[13px] text-muted">Land: Sverige</p>
       </fieldset>
 
       <fieldset className="space-y-2">
-        <legend className="mb-2 text-lg font-semibold">Fraktsätt</legend>
+        <legend className={legendClass}>Fraktsätt</legend>
         {shippingOptions.length === 0 && (
-          <p className="text-sm text-red-700">
-            Inga fraktsätt finns tillgängliga. Kontrollera att seed-kommandot har körts.
-          </p>
+          <p className="text-[13px] text-danger">Inga fraktsätt finns tillgängliga just nu.</p>
         )}
         {shippingOptions.map((option, index) => (
           <label
             key={option.id}
-            className="flex items-center justify-between rounded-md border border-slate-300 px-4 py-3"
+            className="flex cursor-pointer items-center justify-between rounded-[5px] border border-line bg-white px-4 py-3.5 text-[14px] has-[:checked]:border-ink"
           >
             <span className="flex items-center gap-3">
               <input
@@ -187,20 +191,21 @@ export function CheckoutForm({
                 value={option.id}
                 defaultChecked={index === 0}
                 required
+                className="accent-ink"
               />
               {option.name}
             </span>
-            <span>{option.price}</span>
+            <span className="font-semibold">{option.price}</span>
           </label>
         ))}
       </fieldset>
 
       <fieldset className="space-y-2">
-        <legend className="mb-2 text-lg font-semibold">Betalning</legend>
+        <legend className={legendClass}>Betalning</legend>
         {paymentOptions.map((option, index) => (
           <label
             key={option.id}
-            className="flex items-start gap-3 rounded-md border border-amber-400 bg-amber-50 px-4 py-3"
+            className="flex cursor-pointer items-start gap-3 rounded-[5px] border border-[#cfd79a] bg-[#f4f6dc] px-4 py-3.5 text-[14px]"
           >
             <input
               type="radio"
@@ -208,13 +213,14 @@ export function CheckoutForm({
               value={option.id}
               defaultChecked={index === 0}
               required
-              className="mt-1"
+              className="mt-1 accent-ink"
             />
             <span>
-              <span className="font-medium">{option.label}</span>
-              <span className="block text-sm text-amber-900">
-                TESTLÄGE: Ingen riktig betalning genomförs och inget belopp debiteras.
-                Beställningen registreras i Medusa med en manuell betalning.
+              <span className="font-semibold">{option.label}</span>
+              {/* TODO(config): replace the manual test payment with a real provider (e.g. Klarna/Stripe/Swish) in Medusa. */}
+              <span className="block text-[12px] text-muted">
+                TESTLÄGE: Ingen riktig betalning genomförs och inget belopp debiteras. Beställningen
+                registreras med en manuell betalning.
               </span>
             </span>
           </label>
@@ -225,7 +231,7 @@ export function CheckoutForm({
       <button
         type="submit"
         disabled={pending || shippingOptions.length === 0 || paymentOptions.length === 0}
-        className={`${buttonClass} w-full py-3 text-lg`}
+        className="button button-dark w-full"
       >
         {pending ? "Skickar beställning…" : "Slutför beställning (testbetalning)"}
       </button>

@@ -5,7 +5,8 @@ import { Suspense } from "react";
 import type { HttpTypes } from "@medusajs/types";
 import { getLastOrderId } from "@/lib/cart";
 import { formatSek, getSdk, isNotFound } from "@/lib/medusa";
-import { Loading, StoreError } from "@/components/store-ui";
+import { Icon } from "@/components/ui/icons";
+import { Card, Loading, StoreError } from "@/components/store-ui";
 
 export const metadata: Metadata = { title: "Orderbekräftelse" };
 
@@ -33,21 +34,25 @@ async function Confirmation({ params }: { params: Promise<{ id: string }> }) {
   const address = order.shipping_address;
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-lg border border-green-300 bg-green-50 p-4">
-        <h1 className="text-2xl font-bold text-green-900">Tack för din beställning!</h1>
-        <p className="mt-1">
-          Ordernummer <strong>#{order.display_id}</strong>. En bekräftelse skulle skickas till{" "}
-          {order.email} (e-post skickas inte i testmiljön).
+    <div className="mx-auto max-w-2xl space-y-5">
+      <div className="text-center">
+        <span className="result-icon">
+          <Icon name="check" />
+        </span>
+        <h1 className="page-title">Tack för din beställning!</h1>
+        <p className="mt-3 text-[15px] text-muted">
+          Ordernummer <strong className="text-ink">#{order.display_id}</strong>. En bekräftelse skulle skickas
+          till {order.email} (e-post skickas inte i testmiljön).
         </p>
-        <p className="mt-1 text-sm text-amber-900">
+        {/* TODO(config): send order confirmation emails (Medusa notification provider) once email is set up. */}
+        <p className="mx-auto mt-3 inline-block rounded-[4px] bg-[#f4f6dc] px-3 py-1.5 text-[12px] font-semibold">
           Betalning: Testbetalning (manuell) – inget belopp har debiterats.
         </p>
       </div>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="mb-3 font-semibold">Artiklar</h2>
-        <ul className="space-y-2 text-sm">
+      <Card>
+        <h2 className="mb-3 font-heading text-[19px] font-semibold tracking-[-0.4px]">Artiklar</h2>
+        <ul className="space-y-2 text-[14px]">
           {order.items?.map((item) => (
             <li key={item.id} className="flex justify-between gap-2">
               <span>
@@ -57,7 +62,7 @@ async function Confirmation({ params }: { params: Promise<{ id: string }> }) {
             </li>
           ))}
         </ul>
-        <dl className="mt-4 space-y-1 border-t border-slate-200 pt-3 text-sm">
+        <dl className="mt-4 space-y-1.5 border-t border-line pt-3 text-[14px]">
           <div className="flex justify-between">
             <dt>Varor</dt>
             <dd>{formatSek(order.item_total)}</dd>
@@ -70,27 +75,27 @@ async function Confirmation({ params }: { params: Promise<{ id: string }> }) {
             <dt>Totalt</dt>
             <dd>{formatSek(order.total)}</dd>
           </div>
-          <div className="flex justify-between text-slate-600">
+          <div className="flex justify-between text-muted">
             <dt>varav moms</dt>
             <dd>{formatSek(order.tax_total)}</dd>
           </div>
         </dl>
-      </section>
+      </Card>
 
       {address && (
-        <section className="rounded-lg border border-slate-200 bg-white p-4 text-sm">
-          <h2 className="mb-2 font-semibold">Leveransadress</h2>
-          <p>
+        <Card className="text-[14px]">
+          <h2 className="mb-2 font-heading text-[19px] font-semibold tracking-[-0.4px]">Leveransadress</h2>
+          <p className="leading-relaxed">
             {address.first_name} {address.last_name}
             <br />
             {address.address_1}
             <br />
             {address.postal_code} {address.city}
           </p>
-        </section>
+        </Card>
       )}
 
-      <Link href="/" className="inline-block text-sky-700 hover:underline">
+      <Link href="/produkter" className="text-button">
         ← Fortsätt handla
       </Link>
     </div>
@@ -99,8 +104,10 @@ async function Confirmation({ params }: { params: Promise<{ id: string }> }) {
 
 export default function OrderPage({ params }: PageProps<"/order/[id]">) {
   return (
-    <Suspense fallback={<Loading label="Hämtar order…" />}>
-      <Confirmation params={params} />
-    </Suspense>
+    <div className="shell page">
+      <Suspense fallback={<Loading label="Hämtar order…" />}>
+        <Confirmation params={params} />
+      </Suspense>
+    </div>
   );
 }

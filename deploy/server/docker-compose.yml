@@ -1,0 +1,66 @@
+# Värmepumpfixarna – server deployment (same pattern as lilla-admin).
+#
+# Folder on the server: /home/saboor/program/varmepumpfixarna
+#   docker-compose.yml        this file
+#   .env                      configuration (chmod 600, never commit)
+#   certs/supabase-ca.crt     Supabase CA certificate
+#
+# Images are built by GitHub Actions on every push to main.
+# Traffic arrives through the shared jwilder/nginx-proxy (external network
+# `nginx-proxy`), routed by VIRTUAL_HOST; no host ports are published.
+
+services:
+  backend:
+    image: ghcr.io/saboorgee/varmepumpfixarna-backend:${IMAGE_TAG:-latest}
+    container_name: varmepumpfixarna-backend
+    restart: always
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      MEDUSA_WORKER_MODE: shared
+      PORT: "9000"
+      VIRTUAL_HOST: ${BACKEND_DOMAIN:?Set BACKEND_DOMAIN in .env}
+      VIRTUAL_PORT: "9000"
+    expose:
+      - "9000"
+    volumes:
+      # Product images uploaded in Admin (and by the seed).
+      - uploads:/app/static
+      - ./certs:/app/certs:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:9000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      # Migrations run before the server starts; give the first start time.
+      start_period: 600s
+    networks:
+      - default
+      - nginx-proxy
+
+  storefront:
+    image: ghcr.io/saboorgee/varmepumpfixarna-storefront:${IMAGE_TAG:-latest}
+    container_name: varmepumpfixarna-storefront
+    restart: always
+    environment:
+      # Server-side calls over the internal network (container name).
+      MEDUSA_BACKEND_URL: http://varmepumpfixarna-backend:9000
+      MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}
+      COOKIE_SECURE: ${STOREFRONT_COOKIE_SECURE:-true}
+      VIRTUAL_HOST: ${STOREFRONT_DOMAIN:?Set STOREFRONT_DOMAIN in .env}
+      VIRTUAL_PORT: "8000"
+    expose:
+      - "8000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - default
+      - nginx-proxy
+
+volumes:
+  uploads:
+
+networks:
+  nginx-proxy:
+    external: true

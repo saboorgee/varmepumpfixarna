@@ -1,0 +1,47 @@
+services:
+  backend:
+    # Locally `docker compose up --build` builds this image; on a server
+    # `docker compose pull` fetches it from GHCR (built by GitHub Actions).
+    image: ${BACKEND_IMAGE:-ghcr.io/saboorgee/varmepumpfixarna-backend:latest}
+    build:
+      context: ./apps/backend
+    # Backend-only configuration: DATABASE_URL and secrets never reach the storefront.
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      MEDUSA_WORKER_MODE: shared
+      PORT: "9000"
+    ports:
+      - "9000:9000"
+    volumes:
+      # Product uploads from the local file provider (Admin uploads + seed images).
+      - uploads:/app/static
+      # Supabase CA certificate for TLS verification (see README).
+      - ./certs:/app/certs:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:9000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      # First start applies migrations over the network; give it time.
+      start_period: 600s
+    restart: unless-stopped
+
+  storefront:
+    image: ${STOREFRONT_IMAGE:-ghcr.io/saboorgee/varmepumpfixarna-storefront:latest}
+    build:
+      context: ./apps/storefront
+    environment:
+      # Docker-internal URL: all Medusa calls happen server-side in Next.js.
+      MEDUSA_BACKEND_URL: http://backend:9000
+      MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}
+      COOKIE_SECURE: ${STOREFRONT_COOKIE_SECURE:-false}
+    ports:
+      - "8000:8000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  uploads:

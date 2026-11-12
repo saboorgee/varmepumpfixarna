@@ -1,0 +1,13 @@
+node_modules
+.medusa
+.env
+.env.*
+static
+uploads
+certs
+*.pem
+*.crt
+*.log
+.git
+.vscode
+.idea

@@ -1,0 +1,8 @@
+/node_modules
+/.medusa
+/static
+/uploads
+.env
+.env.*
+*.log
+/.cache

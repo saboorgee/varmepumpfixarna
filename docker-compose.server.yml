@@ -1,0 +1,25 @@
+# Server overlay: routes both services through the shared jwilder/nginx-proxy
+# on the external `nginx-proxy` network (same pattern as the other apps on the
+# server). Enabled by COMPOSE_FILE in the server's .env, so plain
+# `docker compose pull` / `docker compose up -d` pick it up automatically.
+services:
+  backend:
+    environment:
+      VIRTUAL_HOST: ${BACKEND_DOMAIN:?Set BACKEND_DOMAIN in .env}
+      VIRTUAL_PORT: "9000"
+    networks:
+      default:
+        aliases: [varmepumpfixarna-backend]
+      nginx-proxy: {}
+
+  storefront:
+    environment:
+      VIRTUAL_HOST: ${STOREFRONT_DOMAIN:?Set STOREFRONT_DOMAIN in .env}
+      VIRTUAL_PORT: "8000"
+    networks:
+      default: {}
+      nginx-proxy: {}
+
+networks:
+  nginx-proxy:
+    external: true

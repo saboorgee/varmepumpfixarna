@@ -11,8 +11,15 @@ services:
       NODE_ENV: production
       MEDUSA_WORKER_MODE: shared
       PORT: "9000"
+    # Loopback only: the public entry point on a server is nginx-proxy
+    # (docker-compose.server.yml). Locally: http://localhost:9000.
     ports:
-      - "9000:9000"
+      - "127.0.0.1:${BACKEND_HOST_PORT:-9000}:9000"
+    networks:
+      default:
+        # Unique name, so the storefront never resolves another project's
+        # `backend` on the shared nginx-proxy network.
+        aliases: [varmepumpfixarna-backend]
     volumes:
       # Product uploads from the local file provider (Admin uploads + seed images).
       - uploads:/app/static
@@ -33,11 +40,11 @@ services:
       context: ./apps/storefront
     environment:
       # Docker-internal URL: all Medusa calls happen server-side in Next.js.
-      MEDUSA_BACKEND_URL: http://backend:9000
+      MEDUSA_BACKEND_URL: http://varmepumpfixarna-backend:9000
       MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}
       COOKIE_SECURE: ${STOREFRONT_COOKIE_SECURE:-false}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:${STOREFRONT_HOST_PORT:-8000}:8000"
     depends_on:
       backend:
         condition: service_healthy

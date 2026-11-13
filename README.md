@@ -289,7 +289,7 @@ Everything that still needs configuration is marked in the code with `TODO(confi
 | Mailbox `info@varmepumpfixarna.se` plus MX/SPF/DKIM in Cloudflare; optional phone number | `src/lib/site.ts`, footer |
 | Real privacy policy | `/integritet` |
 | Medusa product categories (Luft/luft, Luft/vatten, Bergvärme) to filter `/produkter` from the homepage cards | `produkter/page.tsx`, `sections.tsx` |
-| Official NIBE/Toshiba dealer logos (text wordmarks for now) | `sections.tsx` |
+| Official NIBE dealer logo (text wordmark for now; Toshiba uses its official logo, self-hosted in `src/assets/brands/`) | `sections.tsx` |
 | Real payment provider, then remove the test notice and test labels | `header.tsx`, `forms.tsx` |
 | Order confirmation emails | `order/[id]/page.tsx` |
 

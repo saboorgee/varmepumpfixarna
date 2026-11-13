@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import toshibaLogo from "@/assets/brands/toshiba.png";
 import { SITE } from "@/lib/site";
 import { BrandMark, Icon } from "@/components/ui/icons";
 import { IntentLink } from "@/components/ui/intent-link";
@@ -61,9 +63,10 @@ export function Brands() {
           <br />
           <strong>Fler möjligheter.</strong>
         </p>
-        {/* TODO(config): replace the text wordmarks with official dealer logo files (with permission). */}
+        {/* TODO(config): replace the NIBE text wordmark with the official dealer logo file (with permission). */}
         <div className="brand-nibe">NIBE</div>
-        <div className="brand-toshiba">TOSHIBA</div>
+        {/* Toshiba logo from global.toshiba brand assets, self-hosted (transparent background). */}
+        <Image src={toshibaLogo} alt="Toshiba" className="brand-logo" />
         <span className="brand-more">
           Och flera andra
           <br />

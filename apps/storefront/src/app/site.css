@@ -773,11 +773,10 @@
     letter-spacing: -2px;
     line-height: 1;
   }
-  .brand-toshiba {
-    font-family: Arial, sans-serif;
-    font-weight: 800;
-    letter-spacing: 1px;
-    font-size: 24px;
+  .brand-logo {
+    display: block;
+    height: 22px;
+    width: auto;
   }
   .brand-more {
     font-size: 12px;
@@ -1831,8 +1830,8 @@
     .brand-nibe {
       font-size: 30px;
     }
-    .brand-toshiba {
-      font-size: 18px;
+    .brand-logo {
+      height: 17px;
     }
     .brand-more {
       display: none;
@@ -2214,8 +2213,8 @@
     .brand-nibe {
       font-size: 27px;
     }
-    .brand-toshiba {
-      font-size: 16px;
+    .brand-logo {
+      height: 15px;
     }
     .price-doodle {
       display: none;

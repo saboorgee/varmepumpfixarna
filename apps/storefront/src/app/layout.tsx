@@ -11,11 +11,11 @@ const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans", display
 
 export const metadata: Metadata = {
   title: {
-    default: `${SITE.brand} – värmepumpar med installation i ${SITE.city}`,
+    default: `${SITE.brand} – värmepumpar med installation i ${SITE.serviceArea}`,
     template: `%s | ${SITE.brand}`,
   },
   description:
-    "Luft/luft, luft/vatten och bergvärme med installation och service. Få en kostnadsfri offert – eller låt oss jämföra en offert du redan fått.",
+    "Luft/luft och luft/vatten med installation, byte av bergvärmepump och service i Borås och omnejd. Få en kostnadsfri offert – eller låt oss jämföra en offert du redan fått.",
   applicationName: SITE.brand,
 };
 

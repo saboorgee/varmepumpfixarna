@@ -13,7 +13,7 @@ export function SiteFooter() {
             <p>
               Värmepumpar, installation och service.
               <br />
-              Med bas i {SITE.city}.
+              I {SITE.serviceArea}.
             </p>
           </div>
           <div>

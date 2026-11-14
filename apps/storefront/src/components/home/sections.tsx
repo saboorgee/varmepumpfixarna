@@ -14,7 +14,7 @@ export function Hero() {
         <div className="hero-content">
           <div className="eyebrow">
             <span className="eyebrow-line" />
-            Värmepumpar i {SITE.city}
+            Värmepump i {SITE.serviceArea}
           </div>
           <h1>
             Ett varmare hem.
@@ -43,7 +43,7 @@ export function Hero() {
               <span>
                 Lokalt förankrade.
                 <br />
-                <strong>Hemma i {SITE.city}.</strong>
+                <strong>I {SITE.serviceArea}.</strong>
               </span>
             </div>
           </figure>
@@ -164,7 +164,7 @@ const SOLUTIONS = [
     number: "03 / BERG",
     title: "Bergvärme",
     tag: "Energi från berget",
-    text: "För dig som vill installera bergvärme eller byta en befintlig bergvärmepump.",
+    text: "För dig som vill byta din befintliga bergvärmepump.",
     cta: "Få en anpassad offert",
     Art: GroundArt,
   },
@@ -287,8 +287,8 @@ export function Local() {
             Hela vägen.
           </h2>
           <p>
-            {SITE.brand} drivs av {SITE.legalName}, med bas i {SITE.city}. Vi säljer och installerar
-            luft/luft, luft/vatten och bergvärme – och hjälper till med service.
+            {SITE.brand} drivs av {SITE.legalName} och finns för dig i {SITE.serviceArea}. Vi säljer och
+            installerar luft/luft och luft/vatten, byter befintliga bergvärmepumpar – och hjälper till med service.
           </p>
           <p>
             Du behöver inte veta vilken pump du ska välja. Börja med att berätta om ditt hus och din budget, så
@@ -386,8 +386,8 @@ export function Faq() {
             </summary>
             <p>
               Priset beror på modell, husets förutsättningar och arbetet som behövs. I din offert ska pump,
-              installation och eventuella tillägg framgå tydligt. För bergvärme behöver vi också veta om det
-              finns ett befintligt borrhål.
+              installation och eventuella tillägg framgå tydligt. Vid byte av bergvärmepump behöver vi också
+              veta vilken pump du har i dag.
             </p>
           </details>
           <details>

@@ -9,7 +9,9 @@ export const SITE = {
   orgNr: "559453-6129",
   street: "Häglared Gohult 9",
   postcode: "516 90",
+  // Postal city – only for the address. Marketing copy uses `serviceArea`.
   city: "Dalsjöfors",
+  serviceArea: "Borås och omnejd",
   // TODO(config): the mailbox info@varmepumpfixarna.se is not set up yet
   // (create it and add MX/SPF/DKIM records in Cloudflare DNS).
   email: "info@varmepumpfixarna.se",
@@ -25,7 +27,7 @@ export const QUOTE_KINDS = [
   { value: "unsure", slug: "osaker", label: "Osäker – hjälp mig välja" },
   { value: "airair", slug: "luft-luft", label: "Luft/luftvärmepump" },
   { value: "airwater", slug: "luft-vatten", label: "Luft/vattenvärmepump" },
-  { value: "ground", slug: "bergvarme", label: "Bergvärme" },
+  { value: "ground", slug: "bergvarme", label: "Byte av bergvärmepump" },
   { value: "service", slug: "service", label: "Service & reparation" },
 ] as const;
 

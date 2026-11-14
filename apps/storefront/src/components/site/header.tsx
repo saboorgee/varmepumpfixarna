@@ -34,7 +34,7 @@ export function SiteHeader() {
         <div className="shell utility-inner">
           <span>
             <span className="live-dot" />
-            Hemma i {SITE.city}
+            {SITE.serviceArea}
           </span>
           <span>Värmepumpar, installation &amp; service</span>
           <Link href="#kontakt">

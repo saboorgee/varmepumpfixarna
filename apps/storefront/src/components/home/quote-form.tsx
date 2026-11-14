@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useActionState, useEffect, useState, type FormEvent } from "react";
 import { submitQuoteRequest, type QuoteField, type QuoteState } from "@/lib/quote";
-import { QUOTE_INTENTS, QUOTE_KINDS, type QuoteIntent, type QuoteKind } from "@/lib/site";
+import { QUOTE_INTENTS, QUOTE_KINDS, SITE, type QuoteIntent, type QuoteKind } from "@/lib/site";
 import { Icon } from "@/components/ui/icons";
 import { QUOTE_INTENT_EVENT, type QuoteIntentDetail } from "@/components/ui/intent-link";
 
@@ -88,7 +88,7 @@ function QuoteFormInner({ initial }: { initial: Initial }) {
         <h3>Formuläret är inte kopplat ännu</h3>
         <p>
           Tack för ditt intresse! Webbplatsen byggs fortfarande och din förfrågan har <strong>inte</strong>{" "}
-          skickats. Försök gärna igen om några dagar.
+          skickats. Ring oss gärna på <a href={SITE.phoneHref}>{SITE.phone}</a> så länge.
         </p>
         <button type="button" className="button button-dark" onClick={() => setDismissed(state.submissionId)}>
           Tillbaka till formuläret

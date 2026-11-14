@@ -37,9 +37,10 @@ export function SiteHeader() {
             {SITE.serviceArea}
           </span>
           <span>Värmepumpar, installation &amp; service</span>
-          <Link href="#kontakt">
-            {SITE.legalName} <Icon name="diagonal" />
-          </Link>
+          <a href={SITE.phoneHref} aria-label={`Ring oss på ${SITE.phone}`}>
+            <Icon name="phone" />
+            Ring {SITE.phone}
+          </a>
         </div>
       </div>
       <header className="header">

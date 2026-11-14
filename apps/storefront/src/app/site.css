@@ -2146,7 +2146,8 @@
     }
     .mobile-action {
       position: fixed;
-      display: block;
+      display: flex;
+      gap: 8px;
       bottom: 0;
       left: 0;
       right: 0;
@@ -2167,6 +2168,14 @@
       padding: 11px 16px;
       font-size: 12px;
       font-weight: 600;
+      flex: 1;
+    }
+    .mobile-action .mobile-call {
+      flex: 0 0 auto;
+      justify-content: center;
+      gap: 8px;
+      background: var(--orange);
+      color: #253d30;
     }
     .mobile-action .icon {
       width: 18px;

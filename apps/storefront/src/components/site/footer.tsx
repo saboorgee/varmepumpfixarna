@@ -29,6 +29,7 @@ export function SiteFooter() {
           <div>
             <h3>Kontakta oss</h3>
             <Link href="/#offert">Be oss kontakta dig ↗</Link>
+            <a href={SITE.phoneHref}>Ring {SITE.phone}</a>
             {/* TODO(config): mailbox not set up yet – see SITE.email in src/lib/site.ts. */}
             <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
             <p>

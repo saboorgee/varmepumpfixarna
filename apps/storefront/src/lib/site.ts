@@ -15,9 +15,9 @@ export const SITE = {
   // TODO(config): the mailbox kundtjanst@varmepumpfixarna.se is not set up yet
   // (create it and add MX/SPF/DKIM records in Cloudflare DNS).
   email: "kundtjanst@varmepumpfixarna.se",
-  // TODO(config): add a public phone number when one exists, and show it in the
-  // header/footer and the quote form's fallback text.
-  phone: null as string | null,
+  // Shown in the top bar, footer, phone sticky bar and the quote form's fallback text.
+  phone: "072-342 62 88",
+  phoneHref: "tel:+46723426288",
   // Static on purpose: Next.js prerendering forbids reading the current time.
   copyrightYear: 2026,
 } as const;

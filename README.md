@@ -286,7 +286,7 @@ Everything that still needs configuration is marked in the code with `TODO(confi
 |---|---|
 | **Quote form is not connected.** It validates and replies honestly that nothing was sent. Needed: store requests (Medusa module with an Admin list), email notification, spam protection and rate limiting | `src/lib/quote.ts` |
 | Attached quotes ("Jämför offert"): private file storage (never public `/static`) and a larger body limit; the file input is not sent yet | `src/lib/quote.ts`, `quote-form.tsx` |
-| Mailbox `info@varmepumpfixarna.se` plus MX/SPF/DKIM in Cloudflare; optional phone number | `src/lib/site.ts`, footer |
+| Mailbox `kundtjanst@varmepumpfixarna.se` plus MX/SPF/DKIM in Cloudflare; optional phone number | `src/lib/site.ts`, footer |
 | Real privacy policy | `/integritet` |
 | Medusa product categories (Luft/luft, Luft/vatten, Bergvärme) to filter `/produkter` from the homepage cards | `produkter/page.tsx`, `sections.tsx` |
 | Official NIBE dealer logo (text wordmark for now; Toshiba uses its official logo, self-hosted in `src/assets/brands/`) | `sections.tsx` |

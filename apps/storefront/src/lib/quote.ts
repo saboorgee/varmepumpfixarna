@@ -19,7 +19,7 @@ const PHONE = /^\+?[\d\s()-]{6,20}$/;
  * TODO(config): the form is not connected yet. Before going live:
  *   1. Store the request – e.g. a Medusa "Förfrågningar" module (custom module +
  *      store API route) with a list in Medusa Admin, so requests aren't lost.
- *   2. Notify the company by email at info@varmepumpfixarna.se (Resend or SMTP;
+ *   2. Notify the company by email at kundtjanst@varmepumpfixarna.se (Resend or SMTP;
  *      the sending domain needs SPF/DKIM records in Cloudflare).
  *   3. Attached quotes (PDF/images, "Jämför offert"): store them PRIVATELY –
  *      never in Medusa's public /static uploads – and raise the Server Action

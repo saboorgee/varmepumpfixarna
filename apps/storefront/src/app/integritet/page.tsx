@@ -18,6 +18,10 @@ export default function PrivacyPage() {
           När du beställer använder vi dina kontakt- och leveransuppgifter för att hantera beställningen. När du
           ber om en offert använder vi uppgifterna för att besvara din förfrågan.
         </p>
+        <p>
+          Kartan på startsidan hämtas från Google Maps först när du klickar på ”Visa på Google Maps”. Då får
+          Google bland annat din IP-adress, enligt Googles egen integritetspolicy.
+        </p>
         <p className="rounded-[5px] border border-line bg-white p-4 text-[13px]">
           Den fullständiga integritetspolicyn publiceras här innan webbplatsen tas i drift. Har du frågor
           redan nu? Kontakta {SITE.legalName}, {SITE.street}, {SITE.postcode} {SITE.city}.

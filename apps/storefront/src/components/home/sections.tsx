@@ -5,6 +5,7 @@ import { SITE } from "@/lib/site";
 import { BrandMark, Icon } from "@/components/ui/icons";
 import { IntentLink } from "@/components/ui/intent-link";
 import { HeroArt } from "./hero-art";
+import { LocalMap } from "./local-map";
 import { QuoteForm } from "./quote-form";
 
 export function Hero() {
@@ -264,7 +265,7 @@ export function Local() {
   return (
     <section className="section local-section" id="om-oss">
       <div className="shell local-grid">
-        <div className="local-visual">
+        <LocalMap address={`${SITE.street}, ${SITE.postcode} ${SITE.city}`}>
           <div className="local-gridlines" />
           <span className="local-caption">{SITE.legalName.toUpperCase()}</span>
           <div className="location-orbit orbit-one" />
@@ -278,7 +279,7 @@ export function Local() {
             <p>{SITE.street}</p>
           </div>
           <span className="local-postcode">{SITE.postcode}</span>
-        </div>
+        </LocalMap>
         <div className="local-copy">
           <div className="eyebrow">Ett lokalt företag</div>
           <h2 className="heading-2">
